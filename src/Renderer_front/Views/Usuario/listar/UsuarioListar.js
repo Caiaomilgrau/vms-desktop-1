@@ -22,14 +22,10 @@ class UsuarioListar{
                 const usuario = await window.api.buscarporid(idUsuario)
                 const email = document.getElementById('email');
                 const senha = document.getElementById('senha');
-                const tipo = document.getElementById('tipo');
-                const status = document.getElementById('status');
                 id.value = usuario.id,
                 nome.value = usuario.nome,
                 email.value = usuario.email,
                 senha.value = usuario.senha,
-                tipo.value = tipo.value,
-                status.value = status.value
                 this.view.abrirModal();
             }
              if(e.target.classList.contains("excluir-user")){
@@ -47,15 +43,11 @@ class UsuarioListar{
             const nome = document.getElementById('nome');
             const email = document.getElementById('email');
             const senha = document.getElementById('senha');
-            const tipo = document.getElementById('tipo');
-            const status = document.getElementById('status');
             const usuario = {
                 id: id.value,
                 nome: nome.value,
                 email: email.value,
                 senha: senha.value,
-                tipo: tipo.value,
-                status: status.value
             }
             console.log(usuario)
             const resultado = await window.api.editarUsuario(usuario);
@@ -63,8 +55,7 @@ class UsuarioListar{
              nome.value = '';
              email.value = '';
              senha.value = '';
-             tipo.value = '';
-             status.value = '';
+
              this.mensagem.sucesso();
            }else{
              this.mensagem.erro();

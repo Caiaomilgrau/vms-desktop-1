@@ -19,9 +19,7 @@ class UsuariosView{
         Usuarios.forEach(usuario => {// data = atributo
             container += `<tr><td> ${usuario.nome}  </td><td> 
                                    ${usuario.email}  </td><td>  
-                                   ${usuario.senha} </td><td>  
-                                   ${usuario.tipo}  </td><td> 
-                                   ${usuario.status}  </td><td> 
+                                   ${usuario.senha} </td><td> 
             <button class="editar-user" data-id="${usuario.uuid}">Editar</button>
             <button class="excluir-user" data-id="${usuario.uuid}">Excluir</button> </td><tr>`;
         });

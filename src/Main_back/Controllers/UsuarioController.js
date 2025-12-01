@@ -10,14 +10,14 @@ class UsuarioController{
         
     }
     async cadastrar(usuario){
-        if (!usuario.nome || !usuario.email){
+        if (!usuario.nome || !usuario.email || !usuario.senha){
             return false;
         }
         this.usuarioModel.adicionar(usuario);
         return true;
     }
     async atualizarUsuario(usuario){
-        if(!usuario.nome || !usuario.idade){
+        if(!usuario.nome || !usuario.idade || !usuario.senha){
             return false;
         }
         const usuarioExistente = await this.usuarioModel.buscarPorId(usuario.id);
