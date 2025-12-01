@@ -15,8 +15,7 @@ class MensagemDeAlerta{
 this.alerta.fire({
   icon: "error",
   title: "Oops...",
-  text: "Erro, preencha todos os campos!",
-  footer: '<a href="#">Why do I have this issue?</a>'
+  text: "Erro, preencha todos os campos!"
 });
     }
 }

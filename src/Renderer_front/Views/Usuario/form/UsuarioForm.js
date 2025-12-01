@@ -10,7 +10,7 @@ class UsuarioForm{
             this.adicionarEventos();
             console.log('Eventos adicionados');
         },0);
-        return this.view.renderizarFormulario();
+        return this.view.renderizarFormularioDeCadastro();
     // return finaliza uma chamada de função
     }
     adicionarEventos(){
