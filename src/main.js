@@ -5,8 +5,6 @@ import UsuarioController from './Main_back/Controllers/UsuarioController.js';
 import ServicoController from './Main_back/Controllers/ServicoController.js';
 import { initDatabase } from './Main_back/Database/db.js';
 
-
-
 if (started) {
   app.quit();
 }

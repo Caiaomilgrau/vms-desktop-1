@@ -24,8 +24,8 @@ class UsuarioListar{
                 const senha = document.getElementById('senha');
                 const tipo = document.getElementById('tipo');
                 const status = document.getElementById('status');
-                id.value = usuario.id
-                nome.value = usuario.nome
+                id.value = usuario.id,
+                nome.value = usuario.nome,
                 email.value = usuario.email,
                 senha.value = usuario.senha,
                 tipo.value = tipo.value,

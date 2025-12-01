@@ -11,7 +11,7 @@ async function navegarPara(rota){
                        //      /usuario_listar
   const html = await rota_mapeada.getPage(rota);
   document.querySelector('#app').innerHTML = html;
-}
+};
 
 window.addEventListener('hashchange', async () => {
   // chegou #usuarios
@@ -20,4 +20,4 @@ window.addEventListener('hashchange', async () => {
   await navegarPara(rota);
 });
 //1º envia a url = hash
-navegarPara('/usuario_listar');
+navegarPara('/usuario_menu');

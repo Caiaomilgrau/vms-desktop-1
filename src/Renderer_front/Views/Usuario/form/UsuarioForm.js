@@ -11,7 +11,6 @@ class UsuarioForm{
             console.log('Eventos adicionados');
         },0);
         return this.view.renderizarFormularioDeCadastro();
-    // return finaliza uma chamada de função
     }
     adicionarEventos(){
         const formulario = document.getElementById('form-usuario');
@@ -30,7 +29,7 @@ class UsuarioForm{
                 senha: senha.value,
                 tipo: tipo.value,
                 status: status.value
-                }
+                };
                 const resultado = await window.api.cadastrar(usuario);
                 if(resultado){
                     nome.value='';
