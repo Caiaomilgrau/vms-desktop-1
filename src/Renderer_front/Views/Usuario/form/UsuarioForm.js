@@ -13,7 +13,7 @@ class UsuarioForm {
             console.log('Eventos adicionados');
         }, 0);
 
-        return this.view.renderizarFormularioDeCadastro();
+        return this.view.renderizarFormulario();
     }
 
     adicionarEventos() {
@@ -21,11 +21,10 @@ class UsuarioForm {
 
         formulario.addEventListener('submit', async (event) => {
             event.preventDefault();
-
+            console.log(event)
             const nome = document.getElementById('nome');
             const email = document.getElementById('email');
             const senha = document.getElementById('senha');
-
             const usuario = {
                 nome: nome.value,
                 email: email.value,
@@ -42,7 +41,7 @@ class UsuarioForm {
             } else {
                 this.mensagem.erro();
             }
-        });
+        })
     }
 }
 

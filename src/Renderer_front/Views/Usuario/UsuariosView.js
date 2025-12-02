@@ -19,7 +19,7 @@ class UsuariosView{
         Usuarios.forEach(usuario => {// data = atributo
             container += `<tr><td> ${usuario.nome}  </td><td> 
                                    ${usuario.email}  </td><td>  
-                                //    ${usuario.senha} </td><td> 
+                                   ${usuario.senha} </td><td> 
             <button class="editar-user" data-id="${usuario.uuid}">Editar</button>
             <button class="excluir-user" data-id="${usuario.uuid}">Excluir</button> </td><tr>`;
         });
@@ -33,10 +33,7 @@ class UsuariosView{
                     <input type="text" id="nome"/>
                     <label>E-mail:</label>
                     <input type="text" id="email"/>
-                    <label>Tipo:</label>
-                    <input type="text" id="tipo"/>
-                    <label>Status:</label>
-                    <input type="text" id="status"/>
+                
                     <button>Salvar</button>
                 </form>
             </div>
@@ -45,7 +42,7 @@ class UsuariosView{
         `;
         return container;
     }
-    renderizarFormularioDeCadastro(){
+    renderizarFormulario(){
         return `<form id="form-usuario">
                     <label>Nome:</label>
                     <input type="text" id="nome"/>
@@ -56,6 +53,15 @@ class UsuariosView{
                     
                     <button>Salvar</button>
                 </form>`
+    }
+  abrirModal(){
+        const modal = document.getElementById("myModal")
+        modal.style.display = "block"
+    }
+
+    fecharModal(){
+        const modal = document.getElementById("myModal")
+        modal.style.display = "none"
     }
 }
 export default UsuariosView;

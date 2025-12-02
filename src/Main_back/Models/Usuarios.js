@@ -1,52 +1,56 @@
 import db from '../Database/db.js';
-import { randomUUID } from 'node:crypto'; 
+import crypto from 'node:crypto'; 
 
 class Usuarios {
   constructor() {}
-    
-    getDataAtual() {
-    return new Date().toISOString();
-  }
-  adicionar(usuario) {
-     const stmt = db.prepare(`
-      INSERT INTO usuarios (uuid, nome, idade, sync_status, atualizado_em) 
-      VALUES (?, ?, ?, 0, ?)
+   adicionar(usuario) {
+    const uuid = crypto.randomUUID();
+    const stmt = db.prepare(`
+      INSERT INTO usuarios (uuid, nome, idade, sync_status)
+      VALUES (?, ?, ?, ?)
     `);
-    const uuid = usuario.uuid || randomUUID();
-    const dataAtual = this.getDataAtual();
-    const info = stmt.run(uuid, usuario.nome, usuario.idade, dataAtual);
-    return { id: info.lastInsertRowid, uuid: uuid, ...usuario };
+    const info = stmt.run(
+      uuid,
+      usuario.nome,
+      usuario.idade,
+      0
+    );
+    return info.lastInsertRowid;
   }
- listar() {
-    const stmt = db.prepare('SELECT * FROM tbl_usuario WHERE excluido_em IS NULL');
+async listar() {
+    const stmt = db.prepare(`SELECT * FROM usuarios WHERE excluido_em IS NULL`);
     return stmt.all();
   }
 
-  buscarPorId(id) {
-    const stmt = db.prepare('SELECT * FROM usuarios WHERE id = ? AND excluido_em IS NULL');
-    return stmt.get(id);
+async   buscarPorId(id) {
+     console.log(uuid);
+    const stmt = db.prepare(`SELECT * FROM usuarios WHERE uuid = ? AND excluido_em IS NULL`);
+    return stmt.get(uuid);
   }
 
-  atualizar(usuario) {
-    const stmt = db.prepare(`
-      UPDATE usuarios 
-      SET nome = ?, idade = ?, sync_status = 0, atualizado_em = ?
-      WHERE id = ?
-    `);
-    const dataAtual = this.getDataAtual();
-    const info = stmt.run(usuario.nome, usuario.idade, dataAtual, usuario.id);
-    return info.changes > 0;
+async   atualizar(usuario) {
+   console.log('atualizar no model', usuarioAtualizado);
+    const stmt = db.prepare(`UPDATE usuarios 
+       SET nome = ?,
+       idade = ?,
+       atualizado_em = CURRENT_TIMESTAMP,
+       sync_status = 0 
+       WHERE uuid = ?`
+      );
+    const info = stmt.run(
+      usuarioAtualizado.nome,
+      usuarioAtualizado.idade,
+      usuarioAtualizado.uuid
+    );
+    return info.changes;
   }
 
-  remover(id) {
-    const stmt = db.prepare(`
-      UPDATE usuarios 
-      SET excluido_em = ?, sync_status = 0, atualizado_em = ?
-      WHERE id = ?
-    `);
-    const dataAtual = this.getDataAtual();
-    const info = stmt.run(dataAtual, dataAtual, id);
-    return info.changes > 0;
+async   remover(id) {
+    const stmt = db.prepare(`UPDATE usuarios SET excluido_em = CURRENT_TIMESTAMP, sync_status = 0
+      WHERE uuid = ?`);
+    const info = stmt.run(usuario.uuid);
+    //ternario
+    return info.changes > 0 ? true : false;
   }
 }
 export default Usuarios;

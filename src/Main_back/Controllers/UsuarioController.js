@@ -34,5 +34,16 @@ class UsuarioController{
         }
        return this.usuarioModel.buscarPorId(id)
     }
+
+     async removerUsuario(uuid){
+        const usuarioExistente = await this.usuarioModel.buscarPorId(uuid);
+        if(!usuarioExistente){
+            return false
+        }
+        console.log("usuario a ser removido",usuarioExistente)
+        debugger
+        const resultado = await this.usuarioModel.remover(usuarioExistente)
+        return resultado
+    }
 }
 export default UsuarioController;
