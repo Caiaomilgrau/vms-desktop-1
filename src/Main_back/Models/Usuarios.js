@@ -18,7 +18,7 @@ class Usuarios {
     return { id: info.lastInsertRowid, uuid: uuid, ...usuario };
   }
  listar() {
-    const stmt = db.prepare('SELECT * FROM usuarios WHERE excluido_em IS NULL');
+    const stmt = db.prepare('SELECT * FROM tbl_usuario WHERE excluido_em IS NULL');
     return stmt.all();
   }
 
