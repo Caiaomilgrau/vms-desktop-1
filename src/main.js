@@ -4,7 +4,6 @@ import started from 'electron-squirrel-startup';
 import UsuarioController from './Main_back/Controllers/UsuarioController.js';
 import ServicoController from './Main_back/Controllers/ServicoController.js';
 import { initDatabase } from './Main_back/Database/db.js';
-
 if (started) {
   app.quit();
 }
@@ -36,17 +35,17 @@ const createWindow = () => {
   }
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 };
 
 app.whenReady().then(() => {
   createWindow();
   initDatabase();
-  app.on ('activate', () => {
+  app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
-  }
-});
+    }
+  });
 
 ipcMain.handle('dark-mode:toggle', () => {
   if (nativeTheme.shouldUseDarkColors) {
@@ -57,15 +56,28 @@ ipcMain.handle('dark-mode:toggle', () => {
   return nativeTheme.shouldUseDarkColors
 })
 
+ipcMain.handle("usuarios:buscarPorId", async (event, uuid) => {
+  return await controlerUsuario.buscarUsuarioPorId(uuid);
+})
+
+ipcMain.handle("usuarios:removerusuario", async (event, uuid) => {
+  return await controlerUsuario.removerUsuario(uuid);
+})
 
 ipcMain.handle("usuarios:listar", async () => {
   return await controlerUsuario.listar();
 })
 
 ipcMain.handle("usuarios:cadastrar", async (event, usuario) => {
- const resultado = await controlerUsuario.cadastrar(usuario);
- return resultado;
+   const resultado = await controlerUsuario.cadastrar(usuario);
+   return resultado;
 })
+
+ipcMain.handle("usuarios:editar", async (event, usuario) => {
+   const resultado = await controlerUsuario.atualizarUsuario(usuario);
+   return resultado;
+})
+
 });
 
 

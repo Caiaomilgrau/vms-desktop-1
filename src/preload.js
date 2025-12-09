@@ -5,13 +5,15 @@ contextBridge.exposeInMainWorld(
         toggle: () => ipcRenderer.invoke('dark-mode:toggle')
     }
 )
+
 contextBridge.exposeInMainWorld(
+    // window.api.listar()
     'api',{
         listar: () => ipcRenderer.invoke('usuarios:listar'),
         cadastrar: (usuario) => ipcRenderer.invoke('usuarios:cadastrar', usuario),
-        buscarPorId: (uuid) => ipcRenderer.invoke("usuarios:buscarPorId", uuid),
+        buscarporid: (uuid) => ipcRenderer.invoke("usuarios:buscarPorId", uuid),
         editarUsuario: (usuario) => ipcRenderer.invoke("usuarios:editar", usuario),
         removerUsuario: (uuid) => ipcRenderer.invoke("usuarios:removerusuario", uuid),
-
+    
     }
 )
