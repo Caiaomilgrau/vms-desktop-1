@@ -17,10 +17,10 @@ class UsuarioController{
         return true;
     }
     async atualizarUsuario(usuario){
-        if(!usuario.nome || !usuario.idade || !usuario.senha){
+        if(!usuario.nome || !usuario.email){
             return false;
         }
-        const usuarioExistente = await this.usuarioModel.buscarPorId(usuario.id);
+        const usuarioExistente = await this.usuarioModel.buscarPorId(usuario.uuid);
         if(!usuarioExistente){
             return false;
         }

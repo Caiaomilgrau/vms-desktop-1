@@ -9,7 +9,7 @@ class Rotas {
                 return new UsuarioListar().renderizarLista();
             },
             "/usuario_criar": () =>{
-                return new UsuarioForm().renderizarFormulario();
+                return new UsuarioListar().renderizarFormulario();
             },
             "/usuario_menu": () =>{
                 return new UsuariosView().renderizarMenu();

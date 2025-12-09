@@ -6,13 +6,13 @@ class Usuarios {
    adicionar(usuario) {
     const uuid = crypto.randomUUID();
     const stmt = db.prepare(`
-      INSERT INTO usuarios (uuid, nome, idade, sync_status)
+      INSERT INTO usuarios (uuid, nome, email, sync_status)
       VALUES (?, ?, ?, ?)
     `);
     const info = stmt.run(
       uuid,
       usuario.nome,
-      usuario.idade,
+      usuario.email,
       0
     );
     return info.lastInsertRowid;
@@ -22,30 +22,30 @@ async listar() {
     return stmt.all();
   }
 
-async   buscarPorId(id) {
+async   buscarPorId(uuid) {
      console.log(uuid);
     const stmt = db.prepare(`SELECT * FROM usuarios WHERE uuid = ? AND excluido_em IS NULL`);
     return stmt.get(uuid);
   }
 
-async   atualizar(usuario) {
+async   atualizar(usuarioAtualizado) {
    console.log('atualizar no model', usuarioAtualizado);
     const stmt = db.prepare(`UPDATE usuarios 
        SET nome = ?,
-       idade = ?,
+       email = ?,
        atualizado_em = CURRENT_TIMESTAMP,
        sync_status = 0 
        WHERE uuid = ?`
       );
     const info = stmt.run(
       usuarioAtualizado.nome,
-      usuarioAtualizado.idade,
+      usuarioAtualizado.email,
       usuarioAtualizado.uuid
     );
     return info.changes;
   }
 
-async   remover(id) {
+async   remover(usuario) {
     const stmt = db.prepare(`UPDATE usuarios SET excluido_em = CURRENT_TIMESTAMP, sync_status = 0
       WHERE uuid = ?`);
     const info = stmt.run(usuario.uuid);
