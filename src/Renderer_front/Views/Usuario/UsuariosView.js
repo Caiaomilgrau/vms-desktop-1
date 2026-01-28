@@ -45,11 +45,11 @@ class UsuariosView{
     renderizarFormulario(){
         return `<form id="form-usuario">
                     <label>Nome:</label>
-                    <input type="text" id="nome"/>
+                    <input type="text" id="nome" name="nome"/>
                     <label>E-mail:</label>
-                    <input type="text" id="email"/>
+                    <input type="text" id="email" name="email"/>
                     <label>Senha:</label>
-                    <input type="text" id="senha"/>
+                    <input type="text" id="senha" name="senha"/>
                     
                     <button>Salvar</button>
                 </form>`
