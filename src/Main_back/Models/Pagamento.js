@@ -1,35 +1,25 @@
 import db from '../Database/db.js';
 import crypto from 'node:crypto'; 
 
-class Usuarios {
-  constructor() {}
-   adicionar(usuario) {
-    const uuid = crypto.randomUUID();
-    const stmt = db.prepare(`
-      INSERT INTO tbl_usuarios (uuid, nome_usuario, email_usuario, senha_usuario, telefone_usuario, foto_usuario, tipo_usuario, status_usuario, sync_status)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-    const info = stmt.run(
-      uuid,
-      usuario.nome_usuario,
-      usuario.email_usuario,
-      usuario.senha_usuario,
-      usuario.telefone_usuario,
-      usuario.foto_usuario,
-      usuario.tipo_usuario,
-      usuario.status_usuario,
-      0
-    );
-    return info.lastInsertRowid;
-  }
+class Pagamento {
+    constructor(){}
+    async adicionar(pagamento) {
+        const uuid = crypto.randomUUID();
+        const stmt = db.prepare(`INSERT INTO tbl_pagamento (uuid, tipo_pagamento, sync_status)
+             VALUES (?, ?, ?)`);
+             const info = stmt.run(
+                uuid,
+                pagamento.tipo_pagamento,
+                0
+             );
+             return info.lastInsertRowid;
+}
 async listar() {
-    const stmt = db.prepare(`SELECT * FROM tbl_usuarios WHERE excluido_em IS NULL`);
+    const stmt = db.prepare(`SELECT * FROM tbl_pagamento WHERE excluido_em IS NULL`);
     return stmt.all();
   }
 
-
-
-async atualizar(usuarioAtualizado) {
+  async atualizar(usuarioAtualizado) {
    console.log('atualizar no model', usuarioAtualizado);
     const stmt = db.prepare(`UPDATE tbl_usuarios 
        SET nome_usuario = ?,
@@ -62,5 +52,6 @@ async remover(usuario) {
     //ternario
     return info.changes > 0 ? true : false;
   }
-}
-export default Usuarios;
+
+
+} export default Pagamento;

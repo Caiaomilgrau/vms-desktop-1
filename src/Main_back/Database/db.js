@@ -31,6 +31,7 @@ export function initDatabase() {
     nome_categoria TEXT NOT NULL,
     descricao_categoria TEXT DEFAULT NULL,
     foto_categoria TEXT DEFAULT NULL,
+    sync_status_categoria INTEGER DEFAULT 0, -- 0 = Pendente, 1 = Sincronizado
     criado_em DATETIME DEFAULT NULL,
     atualizado_em DATETIME DEFAULT NULL,
     excluido_em DATETIME DEFAULT NULL
@@ -44,7 +45,7 @@ export function initDatabase() {
     descricao_servico TEXT NOT NULL,
     data_conclusao_servico DATETIME DEFAULT NULL,
     foto_servico TEXT NOT NULL,
-    sync_status_servico TEXT NOT NULL,
+    sync_status_servico INTEGER DEFAULT 0, -- 0 = Pendente, 1 = Sincronizado
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     excluido_em DATETIME DEFAULT NULL,
@@ -63,6 +64,7 @@ export function initDatabase() {
     bairro_endereco TEXT NOT NULL,
     cidade_endereco TEXT NOT NULL,
     uf_endereco TEXT NOT NULL,
+    sync_status_endereco INTEGER DEFAULT 0, -- 0 = Pendente, 1 = Sincronizado
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em DATETIME DEFAULT NULL,
     excluido_em DATETIME DEFAULT NULL,
@@ -77,6 +79,7 @@ export function initDatabase() {
     valor_orcamento DECIMAL(10,2) NOT NULL,
     status_orcamento TEXT NOT NULL,
     data_orcamento DATETIME NOT NULL,
+    sync_status_orcamento INTEGER DEFAULT 0, -- 0 = Pendente, 1 = Sincronizado
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em DATETIME DEFAULT NULL,
     excluido_em DATETIME DEFAULT NULL,
@@ -89,6 +92,7 @@ export function initDatabase() {
     id_pagamento INTEGER PRIMARY KEY AUTOINCREMENT,
     uuid_pagamento TEXT,
     tipo_pagamento TEXT NOT NULL,
+    sync_status_pagamento INTEGER DEFAULT 0, -- 0 = Pendente, 1 = Sincronizado
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em DATETIME DEFAULT NULL,
     excluido_em DATETIME DEFAULT NULL
@@ -98,6 +102,7 @@ export function initDatabase() {
     id_servico INTEGER PRIMARY KEY NOT NULL,
     uuid_servico_categoria TEXT,
     id_categoria INTEGER  PRIMARY KEY NOT NULL,
+    sync_status_categoria INTEGER DEFAULT 0, -- 0 = Pendente, 1 = Sincronizado
     CONSTRAINT fk_sc_categoria FOREIGN KEY (id_servico) REFERENCES tbl_servico(id_servico),
     CONSTRAINT fk_sc_servico FOREIGN KEY (id_categoria) REFERENCES tbl_categoria(id_categoria)
   );
@@ -111,6 +116,7 @@ export function initDatabase() {
     descricao_avaliacao TEXT DEFAULT NULL,
     status_avaliacao TEXT NOT NULL,
     foto_avaliacao TEXT DEFAULT NULL,
+    sync_status_avaliacao INTEGER DEFAULT 0, -- 0 = Pendente, 1 = Sincronizado
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em DATETIME DEFAULT NULL,
     excluido_em DATETIME DEFAULT NULL,
