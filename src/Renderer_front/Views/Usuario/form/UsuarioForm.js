@@ -21,25 +21,35 @@ class UsuarioForm {
 
         formulario.addEventListener('submit', async (event) => {
             event.preventDefault();
-            console.log(event)
             const nome = document.getElementById('nome');
             const email = document.getElementById('email');
+            const telefone = document.getElementById('telefone');
+            const foto = document.getElementById('foto');
+            const tipo = document.getElementById('tipo');
+            const status = document.getElementById('status');
             const senha = document.getElementById('senha');
             const usuario = {
                 nome: nome.value,
                 email: email.value,
+                telefone: telefone.value,
+                foto: foto.value,
+                tipo: tipo.value,
+                status: status.value,
                 senha: senha.value
             }
 
-            const resultado = await window.api.cadastrar(usuario);
+            const resposta = await window.api.cadastrar(usuario);
 
-            if (resultado) {
+            if (resposta.success) {
                 nome.value = '';
                 email.value = '';
+                telefone.value = '';
+                foto.value = '';
+                // tipo and status default to first option usually, or reset.
                 senha.value = '';
-                this.mensagem.sucesso();
+                this.mensagem.sucesso(resposta.message);
             } else {
-                this.mensagem.erro();
+                this.mensagem.erro(resposta.message);
             }
         })
     }

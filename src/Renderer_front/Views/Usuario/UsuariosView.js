@@ -1,7 +1,7 @@
-class UsuariosView{
-    constructor(){
+class UsuariosView {
+    constructor() {
     }
-     renderizarMenu(){
+    renderizarMenu() {
         return `<div class="container">
                     <ul>
                         <li><a href="#usuario_criar">Criar Usuário</a></li>
@@ -10,18 +10,18 @@ class UsuariosView{
                 </div>`;
     }
 
-    renderizarLista(Usuarios){
-        let container =`<div style="overflow-x:auto;">
+    renderizarLista(Usuarios) {
+        let container = `<div id="container" style="overflow-x:auto;">
                             <table>
                             <tr>
-                              <th>Nome</th><th>Idade</th><th>ações</th>
+                              <th>Nome</th><th>Email</th><th>Telefone</th><th>ações</th>
                             </tr>`;
         Usuarios.forEach(usuario => {// data = atributo
-            container += `<tr><td> ${usuario.nome}  </td><td> 
-                                   ${usuario.email}  </td><td>  
-                                   ${usuario.senha} </td><td> 
-            <button class="editar-user" data-id="${usuario.uuid}">Editar</button>
-            <button class="excluir-user" data-id="${usuario.uuid}">Excluir</button> </td><tr>`;
+            container += `<tr><td> ${usuario.nome_usuario}  </td><td> 
+                                   ${usuario.email_usuario}  </td><td>  
+                                   ${usuario.telefone_usuario || '...'} </td><td> 
+            <button class="editar-user" data-id="${usuario.uuid_usuario}">Editar</button>
+            <button class="excluir-user" data-id="${usuario.uuid_usuario}">Excluir</button> </td><tr>`;
         });
         container += `</table></div>
         <div id="myModal" class="modal">
@@ -33,6 +33,20 @@ class UsuariosView{
                     <input type="text" id="nome"/>
                     <label>E-mail:</label>
                     <input type="text" id="email"/>
+                    <label>Telefone:</label>
+                    <input type="text" id="telefone"/>
+                    <label>Foto:</label>
+                    <input type="text" id="foto"/>
+                    <label>Tipo:</label>
+                     <select id="tipo">
+                        <option value="PADRAO">Padrão</option>
+                        <option value="ADMIN">Admin</option>
+                    </select>
+                    <label>Status:</label>
+                     <select id="status">
+                        <option value="ATIVO">Ativo</option>
+                        <option value="INATIVO">Inativo</option>
+                    </select>
                 
                     <button>Salvar</button>
                 </form>
@@ -42,24 +56,38 @@ class UsuariosView{
         `;
         return container;
     }
-    renderizarFormulario(){
+    renderizarFormulario() {
         return `<form id="form-usuario">
                     <label>Nome:</label>
                     <input type="text" id="nome" name="nome"/>
                     <label>E-mail:</label>
                     <input type="text" id="email" name="email"/>
+                    <label>Telefone:</label>
+                    <input type="text" id="telefone" name="telefone"/>
+                    <label>Foto (URL):</label>
+                    <input type="text" id="foto" name="foto"/>
+                    <label>Tipo:</label>
+                    <select id="tipo" name="tipo">
+                        <option value="PADRAO">Padrão</option>
+                        <option value="ADMIN">Admin</option>
+                    </select>
+                    <label>Status:</label>
+                    <select id="status" name="status">
+                        <option value="ATIVO">Ativo</option>
+                        <option value="INATIVO">Inativo</option>
+                    </select>
                     <label>Senha:</label>
                     <input type="text" id="senha" name="senha"/>
                     
                     <button>Salvar</button>
                 </form>`
     }
-  abrirModal(){
+    abrirModal() {
         const modal = document.getElementById("myModal")
         modal.style.display = "block"
     }
 
-    fecharModal(){
+    fecharModal() {
         const modal = document.getElementById("myModal")
         modal.style.display = "none"
     }

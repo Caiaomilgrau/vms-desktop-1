@@ -1,12 +1,12 @@
 import db from '../Database/db.js';
-import crypto from 'node:crypto'; 
+import crypto from 'node:crypto';
 
 class Usuarios {
-  constructor() {}
-   adicionar(usuario) {
+  constructor() { }
+  adicionar(usuario) {
     const uuid = crypto.randomUUID();
     const stmt = db.prepare(`
-      INSERT INTO tbl_usuarios (uuid, nome_usuario, email_usuario, senha_usuario, telefone_usuario, foto_usuario, tipo_usuario, status_usuario, sync_status)
+      INSERT INTO tbl_usuario (uuid_usuario, nome_usuario, email_usuario, senha_usuario, telefone_usuario, foto_usuario, tipo_usuario, status_usuario, sync_status_usuario)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
     const info = stmt.run(
@@ -22,16 +22,20 @@ class Usuarios {
     );
     return info.lastInsertRowid;
   }
-async listar() {
-    const stmt = db.prepare(`SELECT * FROM tbl_usuarios WHERE excluido_em IS NULL`);
+  async listar() {
+    const stmt = db.prepare(`SELECT * FROM tbl_usuario WHERE excluido_em IS NULL`);
     return stmt.all();
+  }
+  async buscarPorId(id) {
+    const stmt = db.prepare(`SELECT * FROM tbl_usuario WHERE uuid_usuario = ? AND excluido_em IS NULL`);
+    return stmt.get(id);
   }
 
 
 
-async atualizar(usuarioAtualizado) {
-   console.log('atualizar no model', usuarioAtualizado);
-    const stmt = db.prepare(`UPDATE tbl_usuarios 
+  async atualizar(usuarioAtualizado) {
+    console.log('atualizar no model', usuarioAtualizado);
+    const stmt = db.prepare(`UPDATE tbl_usuario 
        SET nome_usuario = ?,
            email_usuario = ?,
            senha_usuario = ?,
@@ -39,9 +43,9 @@ async atualizar(usuarioAtualizado) {
            foto_usuario = ?,
            tipo_usuario = ?,
            status_usuario = ?,
-           sync_status = 0
-       WHERE uuid = ?`
-      );
+           sync_status_usuario = 0
+       WHERE uuid_usuario = ?`
+    );
     const info = stmt.run(
       usuarioAtualizado.nome_usuario,
       usuarioAtualizado.email_usuario,
@@ -55,9 +59,9 @@ async atualizar(usuarioAtualizado) {
     return info.changes;
   }
 
-async remover(usuario) {
-    const stmt = db.prepare(`UPDATE tbl_usuarios SET excluido_em = CURRENT_TIMESTAMP, sync_status = 0
-      WHERE uuid = ?`);
+  async remover(usuario) {
+    const stmt = db.prepare(`UPDATE tbl_usuario SET excluido_em = CURRENT_TIMESTAMP, sync_status_usuario = 0
+      WHERE uuid_usuario = ?`);
     const info = stmt.run(usuario.uuid);
     //ternario
     return info.changes > 0 ? true : false;

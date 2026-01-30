@@ -39,33 +39,46 @@ const createWindow = () => {
   mainWindow.webContents.openDevTools();
 };
 
+const registrarHandlers = () => {
+  ipcMain.handle("usuarios:listar", async () => {
+    return await controlerUsuario.listar();
+  });
+
+  ipcMain.handle("usuarios:cadastrar", async (event, usuario) => {
+    return await controlerUsuario.cadastrar(usuario);
+  });
+
+  ipcMain.handle("usuarios:buscarPorId", async (event, uuid) => {
+    return await controlerUsuario.buscarPorId(uuid);
+  });
+
+  ipcMain.handle("usuarios:editar", async (event, usuario) => {
+    return await controlerUsuario.atualizarUsuario(usuario);
+  });
+
+  ipcMain.handle("usuarios:removerusuario", async (event, uuid) => {
+    return await controlerUsuario.removerUsuario(uuid);
+  });
+
+  ipcMain.handle('dark-mode:toggle', () => {
+    if (nativeTheme.shouldUseDarkColors) {
+      nativeTheme.themeSource = 'light'
+    } else {
+      nativeTheme.themeSource = 'dark'
+    }
+    return nativeTheme.shouldUseDarkColors
+  });
+};
+
 app.whenReady().then(() => {
+  registrarHandlers(); // Register handlers BEFORE creating window
   createWindow();
   initDatabase();
-  app.on ('activate', () => {
+  app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
-  }
-});
-
-ipcMain.handle('dark-mode:toggle', () => {
-  if (nativeTheme.shouldUseDarkColors) {
-    nativeTheme.themeSource = 'light'
-  } else {
-    nativeTheme.themeSource = 'dark'
-  }
-  return nativeTheme.shouldUseDarkColors
-})
-
-
-ipcMain.handle("usuarios:listar", async () => {
-  return await controlerUsuario.listar();
-})
-
-ipcMain.handle("usuarios:cadastrar", async (event, usuario) => {
- const resultado = await controlerUsuario.cadastrar(usuario);
- return resultado;
-})
+    }
+  });
 });
 
 

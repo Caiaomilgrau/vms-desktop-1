@@ -1,54 +1,47 @@
 import db from '../Database/db.js';
-import crypto from 'node:crypto'; 
+import crypto from 'node:crypto';
 
 class Pagamento {
-    constructor(){}
-    async adicionar(pagamento) {
-        const uuid = crypto.randomUUID();
-        const stmt = db.prepare(`INSERT INTO tbl_pagamento (uuid, tipo_pagamento, sync_status)
+  constructor() { }
+  async adicionar(pagamento) {
+    const uuid = crypto.randomUUID();
+    const stmt = db.prepare(`INSERT INTO tbl_pagamento (uuid_pagamento, tipo_pagamento, sync_status_pagamento)
              VALUES (?, ?, ?)`);
-             const info = stmt.run(
-                uuid,
-                pagamento.tipo_pagamento,
-                0
-             );
-             return info.lastInsertRowid;
-}
-async listar() {
+    const info = stmt.run(
+      uuid,
+      pagamento.tipo_pagamento,
+      0
+    );
+    return info.lastInsertRowid;
+  }
+  async listar() {
     const stmt = db.prepare(`SELECT * FROM tbl_pagamento WHERE excluido_em IS NULL`);
     return stmt.all();
   }
 
-  async atualizar(usuarioAtualizado) {
-   console.log('atualizar no model', usuarioAtualizado);
-    const stmt = db.prepare(`UPDATE tbl_usuarios 
-       SET nome_usuario = ?,
-           email_usuario = ?,
-           senha_usuario = ?,
-           telefone_usuario = ?,
-           foto_usuario = ?,
-           tipo_usuario = ?,
-           status_usuario = ?,
-           sync_status = 0
-       WHERE uuid = ?`
-      );
+  async buscarPorId(id) {
+    const stmt = db.prepare(`SELECT * FROM tbl_pagamento WHERE uuid_pagamento = ? AND excluido_em IS NULL`);
+    return stmt.get(id);
+  }
+
+  async atualizar(pagamentoAtualizado) {
+    console.log('atualizar no model', pagamentoAtualizado);
+    const stmt = db.prepare(`UPDATE tbl_pagamento
+       SET tipo_pagamento = ?,
+           sync_status_pagamento = 0
+       WHERE uuid_pagamento = ?`
+    );
     const info = stmt.run(
-      usuarioAtualizado.nome_usuario,
-      usuarioAtualizado.email_usuario,
-      usuarioAtualizado.senha_usuario,
-      usuarioAtualizado.telefone_usuario,
-      usuarioAtualizado.foto_usuario,
-      usuarioAtualizado.tipo_usuario,
-      usuarioAtualizado.status_usuario,
-      usuarioAtualizado.uuid
+      pagamentoAtualizado.tipo_pagamento,
+      pagamentoAtualizado.uuid
     );
     return info.changes;
   }
 
-async remover(usuario) {
-    const stmt = db.prepare(`UPDATE tbl_usuarios SET excluido_em = CURRENT_TIMESTAMP, sync_status = 0
-      WHERE uuid = ?`);
-    const info = stmt.run(usuario.uuid);
+  async remover(pagamento) {
+    const stmt = db.prepare(`UPDATE tbl_pagamento SET excluido_em = CURRENT_TIMESTAMP, sync_status_pagamento = 0
+      WHERE uuid_pagamento = ?`);
+    const info = stmt.run(pagamento.uuid);
     //ternario
     return info.changes > 0 ? true : false;
   }
