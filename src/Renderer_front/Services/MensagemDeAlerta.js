@@ -1,22 +1,23 @@
 import Swal from 'sweetalert2';
 
-class MensagemDeAlerta{
-    constructor(){
+class MensagemDeAlerta {
+    constructor() {
         this.alerta = Swal;
     }
-    sucesso(){
+    sucesso(mensagem = "Operação realizada com sucesso!") {
         this.alerta.fire({
-  title: "Sucesso!",
-  icon: "success",
-  draggable: true
-});
+            title: "Sucesso!",
+            text: mensagem,
+            icon: "success",
+            draggable: true
+        });
     }
-    erro(){
-this.alerta.fire({
-  icon: "error",
-  title: "Oops...",
-  text: "Erro, preencha todos os campos!"
-});
+    erro(mensagem = "Erro, preencha todos os campos!") {
+        this.alerta.fire({
+            icon: "error",
+            title: "Oops...",
+            text: mensagem
+        });
     }
 }
 export default MensagemDeAlerta;

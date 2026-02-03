@@ -10,6 +10,8 @@ import EnderecoController from './Main_back/Controllers/EnderecoController.js';
 import OrcamentoController from './Main_back/Controllers/OrcamentoController.js';
 import PagamentoController from './Main_back/Controllers/PagamentoController.js';
 import { initDatabase } from './Main_back/Database/db.js';
+import SyncService from './Main_back/Services/SyncService.js';
+import { net } from 'electron';
 
 if (started) {
   app.quit();
@@ -110,21 +112,21 @@ const registrarHandlers = () => {
 
 
   async function sincronizarSeOnline() {
-  const isOnline = net.isOnline();
-  if (isOnline) {
-    console.log('[Main] Aplicativo iniciado com internet. Iniciando sincronização automática...');
-    const dados =  await SyncService.sincronizar('usuarios'); 
-     await controlerUsuario.cadastrarLocalmente(dados) 
+    const isOnline = net.isOnline();
+    if (isOnline) {
+      console.log('[Main] Aplicativo iniciado com internet. Iniciando sincronização automática...');
+      const dados = await SyncService.sincronizar('usuarios');
+      await controlerUsuario.cadastrarLocalmente(dados)
+    }
   }
-}
-sincronizarSeOnline();
+  sincronizarSeOnline();
 
-const INTERVALO_SYNC =  1000 * 60 * 1; // 1 minuto
+  const INTERVALO_SYNC = 1000 * 60 * 1; // 1 minuto
 
   const syncInterval = setInterval(async () => {
     console.log('[Main] Ciclo de auto-sync iniciado...');
     await SyncService.enviarDadosLocais('usuariosalvar');
-    await SyncService.sincronizar(); 
+    await SyncService.sincronizar();
   }, INTERVALO_SYNC);
 
   app.on('before-quit', () => {

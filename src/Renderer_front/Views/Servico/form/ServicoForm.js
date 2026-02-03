@@ -98,10 +98,10 @@ class ServicoForm {
 
             const servico = {
                 id_usuario: document.getElementById('id_usuario').value,
-                descricao_servico: document.getElementById('descricao').value,
-                status_servico: document.getElementById('status').value,
+                descricao: document.getElementById('descricao').value,
+                status: document.getElementById('status').value,
                 data_conclusao: document.getElementById('data_conclusao').value,
-                foto_servico: document.getElementById('foto').value
+                foto: document.getElementById('foto').value
             };
 
             const resposta = await window.api.cadastrarServico(servico);

@@ -1,8 +1,14 @@
 import Orcamento from '../Models/Orcamento.js';
+import Usuarios from '../Models/Usuarios.js';
+import Servicos from '../Models/Servicos.js';
+import Pagamento from '../Models/Pagamento.js';
 
 class OrcamentoController {
     constructor() {
         this.orcamentoModel = new Orcamento();
+        this.usuarioModel = new Usuarios();
+        this.servicoModel = new Servicos();
+        this.pagamentoModel = new Pagamento();
     }
 
     // 1. Listagem
@@ -41,11 +47,20 @@ class OrcamentoController {
                 return { success: false, message: erros.join(', ') };
             }
 
+            // Resolver IDs internos
+            const usuario = await this.usuarioModel.buscarPorId(dadosFrontend.id_usuario);
+            const servico = await this.servicoModel.buscarPorId(dadosFrontend.id_servico);
+            const pagamento = await this.pagamentoModel.buscarPorId(dadosFrontend.id_pagamento);
+
+            if (!usuario || !servico || !pagamento) {
+                return { success: false, message: 'Usuário, Serviço ou Forma de Pagamento não encontrado.' };
+            }
+
             // Mapeamento (Frontend -> Model)
             const orcamentoParaSalvar = {
-                id_usuario: dadosFrontend.id_usuario,
-                id_servico: dadosFrontend.id_servico,
-                id_pagamento: dadosFrontend.id_pagamento,
+                id_usuario: usuario.id_usuario,
+                id_servico: servico.id_servico,
+                id_pagamento: pagamento.id_pagamento,
                 valor_orcamento: dadosFrontend.valor,
                 status_orcamento: dadosFrontend.status || 'PENDENTE',
                 data_orcamento: dadosFrontend.data,

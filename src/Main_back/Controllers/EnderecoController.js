@@ -1,8 +1,10 @@
 import Endereco from '../Models/Endereco.js';
+import Usuarios from '../Models/Usuarios.js';
 
 class EnderecoController {
     constructor() {
         this.enderecoModel = new Endereco();
+        this.usuarioModel = new Usuarios();
     }
 
     // 1. Listagem
@@ -41,9 +43,15 @@ class EnderecoController {
                 return { success: false, message: erros.join(', ') };
             }
 
+            // Resolver ID interno
+            const usuario = await this.usuarioModel.buscarPorId(dadosFrontend.id_usuario);
+            if (!usuario) {
+                return { success: false, message: 'Usuário não encontrado.' };
+            }
+
             // Mapeamento (Frontend -> Model)
             const enderecoParaSalvar = {
-                id_usuario: dadosFrontend.id_usuario,
+                id_usuario: usuario.id_usuario,
                 cep_endereco: dadosFrontend.cep,
                 logradouro_endereco: dadosFrontend.logradouro,
                 numero_endereco: dadosFrontend.numero,

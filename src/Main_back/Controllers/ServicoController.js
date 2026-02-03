@@ -1,8 +1,10 @@
 import Servicos from '../Models/Servicos.js';
+import Usuarios from '../Models/Usuarios.js';
 
 class ServicoController {
     constructor() {
         this.servicoModel = new Servicos();
+        this.usuarioModel = new Usuarios();
     }
 
     // 1. Listagem
@@ -41,9 +43,15 @@ class ServicoController {
                 return { success: false, message: erros.join(', ') };
             }
 
+            // Buscar o ID interno (integer) a partir do UUID
+            const usuario = await this.usuarioModel.buscarPorId(dadosFrontend.id_usuario);
+            if (!usuario) {
+                return { success: false, message: 'Usuário não encontrado para este serviço.' };
+            }
+
             // Mapeamento (Frontend -> Model)
             const servicoParaSalvar = {
-                id_usuario: dadosFrontend.id_usuario,
+                id_usuario: usuario.id_usuario, // Usando o ID inteiro para a FK
                 descricao_servico: dadosFrontend.descricao,
                 status_servico: dadosFrontend.status || 'PENDENTE',
                 data_conclusao: dadosFrontend.data_conclusao || null,

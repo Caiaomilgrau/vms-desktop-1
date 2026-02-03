@@ -1,8 +1,12 @@
 import Avaliacao from '../Models/Avaliacao.js';
+import Usuarios from '../Models/Usuarios.js';
+import Servicos from '../Models/Servicos.js';
 
 class AvaliacaoController {
     constructor() {
         this.avaliacaoModel = new Avaliacao();
+        this.usuarioModel = new Usuarios();
+        this.servicoModel = new Servicos();
     }
 
     // 1. Listagem
@@ -41,10 +45,18 @@ class AvaliacaoController {
                 return { success: false, message: erros.join(', ') };
             }
 
+            // Resolver IDs internos
+            const usuario = await this.usuarioModel.buscarPorId(dadosFrontend.id_usuario);
+            const servico = await this.servicoModel.buscarPorId(dadosFrontend.id_servico);
+
+            if (!usuario || !servico) {
+                return { success: false, message: 'Usuário ou Serviço não encontrado.' };
+            }
+
             // Mapeamento (Frontend -> Model)
             const avaliacaoParaSalvar = {
-                id_usuario: dadosFrontend.id_usuario,
-                id_servico: dadosFrontend.id_servico,
+                id_usuario: usuario.id_usuario,
+                id_servico: servico.id_servico,
                 nota_avaliacao: dadosFrontend.nota,
                 descricao_avaliacao: dadosFrontend.descricao || null,
                 status_avaliacao: dadosFrontend.status || 'PUBLICADO',
