@@ -108,6 +108,31 @@ const registrarHandlers = () => {
   ipcMain.handle("pagamentos:editar", async (event, dados) => await controlerPagamento.atualizar(dados));
   ipcMain.handle("pagamentos:remover", async (event, uuid) => await controlerPagamento.remover(uuid));
 
+
+  async function sincronizarSeOnline() {
+  const isOnline = net.isOnline();
+  if (isOnline) {
+    console.log('[Main] Aplicativo iniciado com internet. Iniciando sincronização automática...');
+    const dados =  await SyncService.sincronizar('usuarios'); 
+     await controlerUsuario.cadastrarLocalmente(dados) 
+  }
+}
+sincronizarSeOnline();
+
+const INTERVALO_SYNC =  1000 * 60 * 1; // 1 minuto
+
+  const syncInterval = setInterval(async () => {
+    console.log('[Main] Ciclo de auto-sync iniciado...');
+    await SyncService.enviarDadosLocais('usuariosalvar');
+    await SyncService.sincronizar(); 
+  }, INTERVALO_SYNC);
+
+  app.on('before-quit', () => {
+    clearInterval(syncInterval);
+  });
+
+
+
   ipcMain.handle('dark-mode:toggle', () => {
     if (nativeTheme.shouldUseDarkColors) {
       nativeTheme.themeSource = 'light'
@@ -128,6 +153,8 @@ app.whenReady().then(() => {
     }
   });
 });
+
+
 
 
 // Quit when all windows are closed, except on macOS. There, it's common
