@@ -1,3 +1,5 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import './index.css';
 import Rotas from './Renderer_front/Services/Rotas.js';
 import Configuracao from './Renderer_front/Services/Configuracao.js';
@@ -7,8 +9,8 @@ await config.modoEscuro();
 
 const rota_mapeada = new Rotas();
 
-async function navegarPara(rota){
-                       //      /usuario_listar
+async function navegarPara(rota) {
+  //      /usuario_listar
   const html = await rota_mapeada.getPage(rota);
   document.querySelector('#app').innerHTML = html;
 };

@@ -5,11 +5,11 @@ class Endereco {
   constructor() { }
   async adicionar(endereco) {
     const uuid = crypto.randomUUID();
-    const stmt = db.prepare(`INSERT INTO tbl_endereco (uuid_endereco, id_usuario, cep_endereco, rua_endereco, numero_endereco, complemento_endereco, bairro_endereco, cidade_endereco, uf_endereco, sync_status_endereco)
+    const stmt = db.prepare(`INSERT INTO tbl_endereco (uuid_endereco, id_usuario, cep_endereco, logradouro_endereco, numero_endereco, complemento_endereco, bairro_endereco, cidade_endereco, uf_endereco, sync_status_endereco)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
     const info = stmt.run(
       uuid,
-      endereco.id_usuario, endereco.cep_endereco, endereco.rua_endereco, endereco.numero_endereco, endereco.complemento_endereco, endereco.bairro_endereco, endereco.cidade_endereco, endereco.uf_endereco, 0
+      endereco.id_usuario, endereco.cep_endereco, endereco.logradouro_endereco, endereco.numero_endereco, endereco.complemento_endereco, endereco.bairro_endereco, endereco.cidade_endereco, endereco.uf_endereco, 0
     );
     return info.lastInsertRowid;
   }
@@ -28,7 +28,7 @@ class Endereco {
     const stmt = db.prepare(`UPDATE tbl_endereco 
        SET id_usuario = ?,
            cep_endereco = ?,
-           rua_endereco = ?,
+           logradouro_endereco = ?,
            numero_endereco = ?,
            complemento_endereco = ?,
            bairro_endereco = ?,
@@ -40,7 +40,7 @@ class Endereco {
     const info = stmt.run(
       enderecoAtualizado.id_usuario,
       enderecoAtualizado.cep_endereco,
-      enderecoAtualizado.rua_endereco,
+      enderecoAtualizado.logradouro_endereco,
       enderecoAtualizado.numero_endereco,
       enderecoAtualizado.complemento_endereco,
       enderecoAtualizado.bairro_endereco,

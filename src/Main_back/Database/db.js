@@ -40,18 +40,18 @@ export function initDatabase() {
    CREATE TABLE IF NOT EXISTS tbl_servico (
     id_servico INTEGER PRIMARY KEY AUTOINCREMENT,
     uuid_servico TEXT,
-    id_categoria INTEGER NOT NULL,
-    nome_servico TEXT NOT NULL,
+    id_usuario INTEGER NOT NULL,
     descricao_servico TEXT NOT NULL,
-    data_conclusao_servico DATETIME DEFAULT NULL,
-    foto_servico TEXT NOT NULL,
+    status_servico TEXT NOT NULL,
+    data_conclusao DATETIME DEFAULT NULL,
+    foto_servico TEXT DEFAULT NULL,
     sync_status_servico INTEGER DEFAULT 0, -- 0 = Pendente, 1 = Sincronizado
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    atualizado_em DATETIME NOT NULL,
+    atualizado_em DATETIME DEFAULT NULL,
     excluido_em DATETIME DEFAULT NULL,
-    CONSTRAINT fk_servico_categoria FOREIGN KEY (id_categoria) REFERENCES tbl_categoria(id_categoria)
+    CONSTRAINT fk_servico_usuario FOREIGN KEY (id_usuario) REFERENCES tbl_usuario(id_usuario)
    );
-    CREATE INDEX idx_servico_id_categoria ON tbl_servico(id_categoria);
+
 
     CREATE TABLE IF NOT EXISTS tbl_endereco (
     id_endereco INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -54,6 +54,9 @@ class UsuarioListar {
                     this.mensagem.erro("Erro ao buscar usuário: " + resposta.message);
                 }
             }
+            if (e.target.classList.contains("close")) {
+                this.view.fecharModal();
+            }
             if (e.target.classList.contains("excluir-user")) {
                 const resposta = await window.api.removerUsuario(idUsuario);
                 console.log(resposta)
@@ -67,9 +70,7 @@ class UsuarioListar {
                     this.mensagem.erro(resposta.message || "Erro ao tentar excluir!")
                 }
             }
-            if (e.target.classList.contains("close")) {
-                this.view.fecharModal();
-            }
+            
         })
         const formulario = document.getElementById('form-usuario');
         if (formulario) {
@@ -102,6 +103,10 @@ class UsuarioListar {
                     if (telefone) telefone.value = '';
                     if (foto) foto.value = '';
                     this.mensagem.sucesso(resposta.message);
+                    setTimeout(async () => {
+                        document.getElementById("app").innerHTML = await this.renderizarLista();
+                    }, 1500)
+                    return true
                 } else {
                     this.mensagem.erro(resposta.message || "Erro ao atualizar!");
                 }

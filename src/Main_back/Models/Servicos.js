@@ -26,19 +26,14 @@ class Servicos {
     return stmt.get(id);
   }
 
-  remover(servico) {
-    const index = this.servicos.indexOf(servico);
-    if (index !== -1) {
-      this.servicos.splice(index, 1);
-    }
-  }
+
   async atualizar(servicoAtualizado) {
     console.log('atualizar no model', servicoAtualizado);
     const stmt = db.prepare(`UPDATE tbl_servico 
        SET descricao_servico = ?,
            status_servico = ?,
            data_conclusao = ?,
-           telefone_usuario = ?,
+
            foto_servico = ?,
            sync_status_servico = 0
        WHERE uuid_servico = ?`
@@ -47,7 +42,7 @@ class Servicos {
       servicoAtualizado.descricao_servico,
       servicoAtualizado.status_servico,
       servicoAtualizado.data_conclusao,
-      servicoAtualizado.telefone_usuario,
+
       servicoAtualizado.foto_servico,
       servicoAtualizado.uuid
     );
