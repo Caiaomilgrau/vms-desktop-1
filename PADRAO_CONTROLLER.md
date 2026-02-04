@@ -70,5 +70,4 @@ export default entity_name_singularController;
 
 ## 5. Boas Práticas de Consulta
 1.  **Try/Catch Obrigatório**: Nunca deixe um erro do SQLite quebrar o processo principal do Electron.
-2.  **DTO (Data Transfer Object)**: Se o banco possui colunas técnicas (ex: `sync_status`), não as envie para o frontend a menos que seja necessário.
-3.  **Log de Erro**: Sempre use `console.error` para debugar falhas no backend sem expor stack traces sensíveis para o usuário final.
+2.  **Log de Erro**: Sempre use `console.error` para debugar falhas no backend sem expor stack traces sensíveis para o usuário final.
