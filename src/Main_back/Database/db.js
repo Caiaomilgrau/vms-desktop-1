@@ -100,12 +100,13 @@ export function initDatabase() {
    );
 
    CREATE TABLE IF NOT EXISTS tbl_servico_categoria (
-    id_servico INTEGER PRIMARY KEY NOT NULL,
+    id_servico INTEGER NOT NULL,
+    id_categoria INTEGER NOT NULL,
     uuid_servico_categoria TEXT,
-    id_categoria INTEGER  PRIMARY KEY NOT NULL,
     sync_status_categoria INTEGER DEFAULT 0, -- 0 = Pendente, 1 = Sincronizado
-    CONSTRAINT fk_sc_categoria FOREIGN KEY (id_servico) REFERENCES tbl_servico(id_servico),
-    CONSTRAINT fk_sc_servico FOREIGN KEY (id_categoria) REFERENCES tbl_categoria(id_categoria)
+    PRIMARY KEY (id_servico, id_categoria),
+    CONSTRAINT fk_sc_servico FOREIGN KEY (id_servico) REFERENCES tbl_servico(id_servico),
+    CONSTRAINT fk_sc_categoria FOREIGN KEY (id_categoria) REFERENCES tbl_categoria(id_categoria)
   );
 
     CREATE TABLE IF NOT EXISTS tbl_avaliacao (

@@ -1,58 +1,56 @@
-# Padrão de Desenvolvimento para Views (Frontend)
+# Padrão de Desenvolvimento para Views (Frontend Read-Only)
 
-Este documento descreve o padrão arquitetural utilizado no frontend do projeto VMS Desktop para a construção de interfaces. O padrão utiliza uma separação clara entre a estrutura HTML (Templates) e a lógica de comportamento (Eventos e API).
+Este documento descreve o padrão arquitetural utilizado no frontend do projeto VMS Desktop para a construção de interfaces de consulta. A aplicação foca exclusivamente na exibição de dados.
 
 ## 1. Estrutura de Arquivos
-Cada módulo (ex: `Usuario`, `Servico`) deve seguir a seguinte estrutura de pastas:
-- `NomeModuloView.js`: Centralizador de templates HTML.
-- `form/NomeModuloForm.js`: Lógica de criação/formulário.
-- `listar/NomeModuloListar.js`: Lógica de listagem e ações (editar/excluir).
+Cada módulo (ex: `Usuario`, `Servico`) segue a seguinte estrutura simplificada:
+- `NomeModuloView.js`: Centralizador de templates HTML das tabelas.
+- `listar/NomeModuloListar.js`: Lógica de consumo de API e injeção de dados.
 
 ---
 
 ## 2. Componentes do Padrão
 
-### A. NomeModuloView (A View "Pura")
-Foca exclusivamente no **HTML** e manipulações visuais diretas.
-- **Métodos `renderizarX()`**: Devem retornar strings de template (Template Literals).
-- **Sem Lógica de Negócio**: Não deve fazer chamadas à API ou processar dados complexos.
-- **Controle de UI**: Pode conter métodos para abrir/fechar modais ou animações simples.
+### A. NomeModuloView (Template)
+Foca exclusivamente na estrutura visual das listagens.
+- **Método `renderizarLista(dados)`**: Retorna strings de template contendo a tabela.
+- **Método `renderizarMenu()`**: Retorna as opções de navegação do módulo (apenas links para listagem).
+- **Badge Helpers**: Métodos como `getBadgeStatus(status)` para formatação visual de dados.
 
-### B. Lógica Handlers (Form e Listar)
-Focam no **Comportamento** e na ponte com o **Backend**.
-- **Instanciação**: Cria uma instância da View no `constructor` (`this.view = new NomeModuloView()`).
-- **Renderização**: Chama o método da View para obter o HTML.
-- **Gerenciamento de Eventos**:
-    - Deve usar `setTimeout(() => this.adicionarEventos(), 0)` para garantir que o DOM foi injetado antes de buscar elementos.
-    - Utiliza `event.preventDefault()` em formulários.
-- **Chamadas de API**: Utiliza o objeto global `window.api` para comunicação IPC.
+### B. NomeModuloListar (Controller de Interface)
+Foca na ponte entre o processo principal e o DOM.
+- **Instanciação**: Cria uma instância da View no `constructor`.
+- **`renderizarLista()`**: 
+    1. Busca dados via `window.api.listarX()`.
+    2. Passa os dados para a View gerar o HTML.
+    3. Retorna o HTML para o roteador.
+- **`adicionarEventos()`**: Reservado para filtros de busca ou paginação (se implementado). Comportamentos de edição e exclusão foram removidos.
 
 ---
 
 ## 3. Fluxo de Funcionamento
 
-1. **Chamada**: Um roteador principal chama o método de renderização do `Handler` (ex: `UsuarioListar.renderizarLista()`).
-2. **Template**: O `Handler` solicita o HTML para a `View` (`this.view.renderizarLista(dados)`).
-3. **Injeção**: O HTML é retornado para o roteador que o injeta no container principal (`#app`).
-4. **Eventos**: O `Handler`, via `setTimeout`, busca os elementos injetados e anexa os `EventListener`.
-5. **Ação**: Quando o usuário interage, o `Handler` processa, chama a `API`, e atualiza o DOM ou exibe alertas via `MensagemDeAlerta`.
+1. **Chamada**: O roteador (`Rotas.js`) chama o método de renderização do `Handler` (ex: `UsuarioListar.renderizarLista()`).
+2. **API**: O `Handler` solicita os dados ao processo principal (Main) via IPC.
+3. **Template**: O `Handler` passa os dados recebidos para a `View`.
+4. **Injeção**: O HTML final é injetado no container principal (`#app`).
 
 ---
 
-## 4. Exemplos de Relação (VMS Pattern)
+## 4. Relação de Componentes (Read-Only)
 
 ```mermaid
 graph TD
-    Router[Index/Main Router] --> Handler[UsuarioListar]
-    Handler -->|1. Solicita HTML| View[UsuariosView]
-    View -->|2. Retorna Template| Handler
-    Handler -->|3. Retorna p/ Injeção| Router
-    Handler -.->|4. Adiciona Eventos (async)| DOM[#app Container]
-    DOM -->|5. Clique/Submit| Handler
-    Handler -->|6. Chamada IPC| API[window.api]
+    Router[Rotas.js] --> Handler[UsuarioListar]
+    Handler -->|1. window.api.listar| Main[processo Principal]
+    Main -->|2. Retorna Dados| Handler
+    Handler -->|3. Passa Dados| View[UsuariosView]
+    View -->|4. Retorna HTML| Handler
+    Handler -->|5. Injeta no DOM| DOM[#app Container]
 ```
 
-## 5. Boas Práticas
-- **Event Delegation**: Em listagens, ouça cliques no container pai (`this.app.addEventListener('click', ...)`) e use `e.target.classList.contains()` para identificar botões de ação.
-- **Limpeza**: Sempre limpe campos de formulário após sucesso.
-- **Feedback**: Utilize a classe `MensagemDeAlerta` para feedback visual ao usuário após operações de API.
+## 5. Boas Práticas (Leitura)
+- **Placeholder**: Exibir "Nenhum registro encontrado" caso a lista venha vazia.
+- **Formatação**: Utilizar `toLocaleDateString` ou `toFixed(2)` para garantir que dados brutos do banco sejam legíveis.
+- **Performance**: Evitar renderizar milhares de linhas de uma vez; se o banco crescer, considerar filtros de período.
+

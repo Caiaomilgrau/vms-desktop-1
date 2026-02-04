@@ -1,62 +1,48 @@
-# Análise de Arquitetura e Fluxo do Projeto VMS Desktop
+# Análise de Arquitetura e Fluxo do Projeto VMS Desktop (Read-Only)
 
 > **Última Atualização:** 31/01/2026
+> **Status:** Refatorado para Visualização de Dados (Somente Leitura)
 
-Este documento descreve a arquitetura atual do sistema, padrões identificados, e pontos de atenção para correções e melhorias.
+Este documento descreve a arquitetura atual do sistema como um visualizador de dados estático.
 
 ## 1. Visão Geral da Arquitetura
-O projeto é uma aplicação Desktop desenvolvida com **Electron**, utilizando **Vite** para o build system e **SQLite** (`better-sqlite3`) como banco de dados local.
+O projeto é uma aplicação Desktop desenvolvida com **Electron**, utilizando **Vite** e **SQLite** (`better-sqlite3`). A aplicação foi simplificada para remover todas as capacidades de escrita, edição e exclusão.
 
-### Fluxo de Dados (IPC)
+### Fluxo de Dados (Consulta IPC)
 A comunicação segue o padrão de segurança do Electron com `ContextBridge`:
-1.  **Frontend (Renderer)**: Solicita ações via `window.api` (definida no `preload.js`).
-2.  **Preload**: Intermedia a chamada usando `ipcRenderer.invoke`.
-3.  **Backend (Main)**: Recebe a mensagem via `ipcMain.handle`, chama o Controller apropriado e retorna a resposta.
+1.  **Frontend (Renderer)**: Solicita listagens via `window.api.listar...`.
+2.  **Preload**: Intermedia a chamada usando `ipcRenderer.invoke` apenas para métodos de leitura.
+3.  **Backend (Main)**: Recebe a mensagem via `ipcMain.handle`, chama o Controller apropriado para buscar dados e retorna a resposta.
 
 ## 2. Estrutura de Pastas e Responsabilidades
 
 ### `src/Main_back` (Backend / Main Process)
-Responsável pela lógica de negócios, acesso a dados e orquestração.
-*   **Database/**: Configuração do SQLite e scripts de criação de tabelas (`db.js`).
-*   **Models/**: Acesso direto ao banco (DAO Pattern). Executa queries SQL (INSERT, SELECT, UPDATE).
-    *   *Padrão*: Classes (ex: `Usuarios`, `Servicos`) com métodos CRUD.
-*   **Controllers/**: Regra de negócio e validação.
-    *   *Padrão*: Recebe dados "crus" do frontend, valida, mapeia para o formato do banco (DTO implícito) e chama o Model.
+Focado exclusivamente na recuperação de dados do banco.
+*   **Database/**: Configuração do SQLite (`db.js`).
+*   **Models/**: Acesso direto ao banco (DAO Pattern). Executa apenas queries `SELECT`.
+    *   *Padrão*: Classes com métodos `listarTodos` e `buscarPorId`.
+*   **Controllers/**: Orquestração de consultas e mapeamento de chaves de banco para o frontend.
 
 ### `src/Renderer_front` (Frontend / Renderer Process)
-Responsável pela interface gráfica e interação com o usuário.
-*   **Views/**: Organizado por domínio (`Usuario`, `Servico`, etc.).
-    *   **Classes View** (ex: `UsuariosView.js`): Responsáveis apenas por gerar Strings HTML. *Atenção: Uso de `innerHTML` (Risco XSS).*
-    *   **Logica de Página** (ex: `UsuarioListar.js`): Atua como um "Page Controller". Busca dados via API, chama a View para renderizar o HTML e adiciona Event Listeners ao DOM.
+Focado no consumo e exibição de dados.
+*   **Views/**:
+    *   **Classes View**: Responsáveis por gerar o template HTML das tabelas.
+    *   **Logica de Página** (`*Listar.js`): Controladores de interface que buscam dados e gerenciam a renderização.
 
-## 3. Padrões de Programação Identificados
+## 3. Padrões de Programação
 
-*   **Padrão de Nomenclatura de Tabelas**: O banco utiliza prefixo `tbl_` e singular (ex: `tbl_usuario`, `tbl_servico`). *Correções recentes garantiram consistência nesse padrão.*
-*   **Soft Delete**: O sistema implementa exclusão lógica verificando o campo `excluido_em IS NULL` nas consultas.
-*   **Mapeamento de Dados (Controller)**:
-    *   Frontend envia chaves genéricas (`nome`, `email`).
-    *   Controller traduz para chaves do banco (`nome_usuario`, `email_usuario`).
+*   **Estratégia de Somente Leitura**: Todas as rotas de criação (`/uuid_criar`) e botões de ação (Editar/Excluir) foram removidos tanto do frontend quanto do backend.
+*   **Segurança IPC**: O `preload.js` não expõe métodos que permitam alteração no banco de dados.
+*   **Soft Delete Management**: As queries `SELECT` continuam respeitando o filtro `excluido_em IS NULL` para garantir que apenas dados ativos sejam exibidos.
 
-## 4. Análise de Qualidade e Pontos de Atenção
+## 4. Análise de Qualidade e Mudanças
 
-### 🔴 Crítico (Bugs e Falhas)
-1.  **Duplicidade de Método em `Servicos.js`**:
-    *   A classe `Servicos` possui **dois** métodos nomeados `remover`. O primeiro tenta manipular um array inexistente (`this.servicos.splice`) e o segundo faz a query correta no SQL. O JavaScript manterá apenas o último, mas isso é um erro de código que deve ser limpo.
-2.  **Risco de Segurança (XSS)**:
-    *   As Views (`UsuariosView.js`) utilizam template strings inseridas via `innerHTML` sem sanitização. Nomes de usuários contendo scripts maliciosos serão executados.
+*   ✅ **Clean Code**: Métodos duplicados e lógica de escrita legada foram removidos de todos os Models e Controllers.
+*   ✅ **Estrutura SPA**: O roteador central em `Rotas.js` foi limpo, mantendo apenas navegação entre menus e listas.
+*   ✅ **Integridade**: A exclusão de formulários físicos garante que não existam pontos de entrada de dados não autorizados.
 
-### 🟡 Importante (Dívida Técnica)
-1.  **Inconsistência de Implementação (Serviços)**:
-    *   O módulo de Usuários está completo (Listar, Cadastrar, Editar).
-    *   O módulo de `Servico` está incompleto no frontend (apenas `renderizarMenu` implementado em `ServicosView.js`).
-2.  **Acoplamento View-DOM**:
-    *   A lógica de eventos depende de seletores de ID globais fixos (`document.getElementById("form-usuario")`), o que dificulta componentização ou uso de múltiplos formulários.
+## 5. Manutenção e Melhorias Futuras
+1.  **Exportação**: Implementar função de exportar listagens para CSV ou PDF (Leitura Estendida).
+2.  **Filtros Avançados**: Adicionar busca textual em tempo real nas tabelas de listagem.
+3.  **Sanitização**: Refinar o escape de HTML nas Views para evitar XSS em dados importados.
 
-### Status das Correções Anteriores
-*   ✅ **Nomes de Tabelas**: Resolvido. `Usuarios.js` usa `tbl_usuario`.
-*   ✅ **Falta de Campos**: `UsuarioController` agora trata defaults (telefone, foto) ou valida obrigatórios.
-
-## 5. Próximos Passos Recomendados
-1.  **Refatorar `Servicos.js`**: Remover o método `remover` duplicado.
-2.  **Padronizar Views**: Implementar as telas de formulário e listagem para `Serviços`, seguindo o padrão de `Usuarios`.
-3.  **Sanitização**: Implementar função básica de escape de HTML nas Views.
