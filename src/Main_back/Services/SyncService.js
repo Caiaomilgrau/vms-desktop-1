@@ -1,7 +1,7 @@
 import { net } from 'electron';
 import UsuarioModel from '../Models/Usuarios.js';
 
-const API_URL = 'http://localhost:8080/backend/api/';
+const API_URL = 'http://localhost:8080/backend';
 
 class SyncService {
   constructor() {
@@ -18,7 +18,7 @@ class SyncService {
     try {
 
       console.log('[Sync] Enviando...');
-      const response = await fetch(`${API_URL}${url}`, {
+      const response = await fetch(`${API_URL}/api/${url}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -39,6 +39,35 @@ class SyncService {
     }
   }
 
+  async atualizarSincronizados(url, id){
+    if (!net.isOnline()) {
+      console.log('[Sync] Sem internet. Abortando.');
+      return { success: false, error: 'offline' };
+    }
+
+    try {
+
+      console.log('[Sync] Enviando...');
+      const response = await fetch(`${API_URL}/${url}/atualizar/${id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.chaveAPI}`,
+        },
+      });
+
+      if (!response.ok) throw new Error('Erro no servidor PHP');
+
+      const data = await response.json();
+      console.log('[Sync] Resposta recebida:', data.data);
+    
+     return { success: true, dados: data };
+
+    } catch (error) {
+      console.error('[Sync] Erro:', error);
+      return { success: false, error: error.message };
+    }
+  }
   async enviarDadosLocais(url) {
     if (!net.isOnline()) {
       console.log('[Sync Upload] Sem internet. Tentaremos depois.');
@@ -57,7 +86,7 @@ class SyncService {
     for (const usuario of pendentes) {
       try {
 
-        const response = await fetch(`${API_URL}${url}`, {
+        const response = await fetch(`${API_URL}/api/${url}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -85,4 +114,4 @@ class SyncService {
   }
 }
 
-export default new SyncService(); 
+export default SyncService; 

@@ -10,7 +10,7 @@ export function initDatabase() {
 
   db.exec(`
    CREATE TABLE IF NOT EXISTS tbl_usuario (
-    id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_usuario INTEGER PRIMARY KEY,
     uuid_usuario TEXT,
     nome_usuario TEXT NOT NULL,
     email_usuario TEXT NOT NULL,
@@ -21,6 +21,7 @@ export function initDatabase() {
     status_usuario TEXT NOT NULL,
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em DATETIME DEFAULT NULL,
+    sincronizado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
     excluido_em DATETIME DEFAULT NULL -- Se estiver preenchido, o registro foi "deletado"
    );
 
