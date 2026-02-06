@@ -1,15 +1,23 @@
 import Endereco from '../Models/Endereco.js';
 import Usuarios from '../Models/Usuarios.js';
+import SyncService from '../Services/SyncService.js';
 
 class EnderecoController {
     constructor() {
         this.enderecoModel = new Endereco();
         this.usuarioModel = new Usuarios();
+        this.syncService = new SyncService();
     }
 
     // 1. Listagem
     async listar() {
         try {
+            const dadosDoServidor = await this.syncService.sincronizar('enderecos');
+            console.log(dadosDoServidor.dados.data);
+            dadosDoServidor.dados.data.forEach(async endereco => {
+                await this.enderecoModel.salvar(endereco);
+                await this.syncService.atualizarSincronizados('endereco', endereco.id_endereco);
+            });
             const dados = await this.enderecoModel.listar();
             return { success: true, data: dados };
         } catch (error) {

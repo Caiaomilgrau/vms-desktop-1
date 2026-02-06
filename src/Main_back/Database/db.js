@@ -26,7 +26,7 @@ export function initDatabase() {
    );
 
    CREATE TABLE IF NOT EXISTS tbl_categoria (
-    id_categoria INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_categoria INTEGER PRIMARY KEY,
     uuid_categoria TEXT,
     nome_categoria TEXT NOT NULL,
     descricao_categoria TEXT DEFAULT NULL,
@@ -37,7 +37,7 @@ export function initDatabase() {
    );
 
    CREATE TABLE IF NOT EXISTS tbl_servico (
-    id_servico INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_servico INTEGER PRIMARY KEY,
     uuid_servico TEXT,
     id_usuario INTEGER NOT NULL,
     descricao_servico TEXT NOT NULL,
@@ -52,7 +52,7 @@ export function initDatabase() {
 
 
     CREATE TABLE IF NOT EXISTS tbl_endereco (
-    id_endereco INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_endereco INTEGER PRIMARY KEY,
     uuid_endereco TEXT,
     id_usuario INTEGER NOT NULL,
     cep_endereco TEXT NOT NULL,
@@ -69,7 +69,7 @@ export function initDatabase() {
    );
 
    CREATE TABLE IF NOT EXISTS tbl_orcamento (
-    id_orcamento INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_orcamento INTEGER PRIMARY KEY,
     uuid_orcamento TEXT,
     id_usuario INTEGER NOT NULL,
     id_servico INTEGER NOT NULL,
@@ -86,7 +86,7 @@ export function initDatabase() {
    );
 
     CREATE TABLE IF NOT EXISTS tbl_pagamento (
-    id_pagamento INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_pagamento INTEGER PRIMARY KEY,
     uuid_pagamento TEXT,
     tipo_pagamento TEXT NOT NULL,
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -104,7 +104,7 @@ export function initDatabase() {
   );
 
     CREATE TABLE IF NOT EXISTS tbl_avaliacao (
-    id_avaliacao INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_avaliacao INTEGER PRIMARY KEY,
     uuid_avaliacao TEXT,
     id_servico INTEGER NOT NULL,
     id_usuario INTEGER NOT NULL,
@@ -120,7 +120,7 @@ export function initDatabase() {
    );
 
    CREATE TABLE IF NOT EXISTS tbl_agendamento (
-    id_agendamento INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_agendamento INTEGER PRIMARY KEY,
     uuid_agendamento TEXT,
     id_usuario INTEGER NOT NULL,
     id_servico INTEGER NOT NULL,

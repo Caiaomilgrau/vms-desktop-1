@@ -1,15 +1,21 @@
 import Servicos from '../Models/Servicos.js';
-import Usuarios from '../Models/Usuarios.js';
+import SyncService from '../Services/SyncService.js';
 
 class ServicoController {
     constructor() {
         this.servicoModel = new Servicos();
-        this.usuarioModel = new Usuarios();
+        this.syncService = new SyncService();
     }
 
     // 1. Listagem
     async listar() {
         try {
+            const dadosDoServidor = await this.syncService.sincronizar('servicos');
+            console.log(dadosDoServidor.dados.data);
+            dadosDoServidor.dados.data.forEach(async servico => {
+                await this.servicoModel.salvar(servico);
+                await this.syncService.atualizarSincronizados('servico', servico.id_servico);
+            });
             const dados = await this.servicoModel.listar();
             return { success: true, data: dados };
         } catch (error) {

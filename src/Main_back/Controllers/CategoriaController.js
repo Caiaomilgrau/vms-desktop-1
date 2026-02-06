@@ -1,13 +1,21 @@
-import Categoria from '../Models/Categoria.js';
+    import Categoria from '../Models/Categoria.js';
+import SyncService from '../Services/SyncService.js';
 
 class CategoriaController {
     constructor() {
         this.categoriaModel = new Categoria();
+        this.syncService = new SyncService();
     }
 
     // 1. Listagem
     async listar() {
         try {
+            const dadosDoServidor = await this.syncService.sincronizar('categorias');
+            console.log(dadosDoServidor.dados.data);
+            dadosDoServidor.dados.data.forEach(async categoria => {
+                await this.categoriaModel.salvar(categoria);
+                await this.syncService.atualizarSincronizados('categoria', categoria.id_categoria);
+            });
             const dados = await this.categoriaModel.listar();
             return { success: true, data: dados };
         } catch (error) {

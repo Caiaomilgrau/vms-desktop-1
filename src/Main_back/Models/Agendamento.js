@@ -12,6 +12,7 @@ class Agendamento {
     const stmt = db.prepare(`SELECT * FROM tbl_agendamento WHERE uuid_agendamento = ? AND excluido_em IS NULL`);
     return stmt.get(id);
   }
+  
 }
 
 export default Agendamento;
